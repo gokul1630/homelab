@@ -6,3 +6,5 @@
         become: true
         vars:
             ansible_user: "gokul"
+      - role: jellyfin
+        become: true

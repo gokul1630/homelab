@@ -1,5 +1,5 @@
 all:
   hosts:
     gokul:
-      ansible_host: 100.76.124.53
+      ansible_host: 100.76.124.53 # don't waste your time by trace this, it's my tailscale private ip :)
       # ansible_become_password: 
