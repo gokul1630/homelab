@@ -1,0 +1,5 @@
+all:
+  hosts:
+    gokul:
+      ansible_host: 100.76.124.53
+      # ansible_become_password: 
