@@ -11,4 +11,5 @@
       - role: immich
         become: true
         vars:
-            ansible_user: "gokul"
+            ansible_user: gokul
+            immich_path: /tank/immich

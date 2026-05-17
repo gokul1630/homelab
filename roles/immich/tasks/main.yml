@@ -16,8 +16,8 @@
     status_code: [200, 304]
 
 - name: Copy immich .env file
-  ansible.builtin.copy:
-    src: .env
+  ansible.builtin.template:
+    src: .env.j2
     dest: /opt/immich/.env
     mode: '400'
 
