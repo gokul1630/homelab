@@ -3,8 +3,11 @@ services:
     image: jellyfin/jellyfin
     container_name: jellyfin
     ports:
-      - 3003:8096/tcp
+      - 8096:8096/tcp
       - 7359:7359/udp
+    environment:
+      - PUID=1000
+      - PGID=1000
     volumes:
       - /opt/jellyfin/config:/config
       - /opt/jellyfin/cache:/cache

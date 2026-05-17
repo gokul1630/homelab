@@ -6,20 +6,26 @@
   ansible.builtin.file:
     path: /opt/immich
     state: directory
-    mode: '0755'
+    mode: '0700'
+    group: '1000'
+    owner: '1000'
 
 - name: Fetch docker-compose yml
   ansible.builtin.uri:
     url: https://github.com/immich-app/immich/releases/latest/download/docker-compose.yml
     dest: /opt/immich/docker-compose.yml
-    mode: 600
     status_code: [200, 304]
+    mode: 400
+    group: '1000'
+    owner: '1000'
 
 - name: Copy immich .env file
   ansible.builtin.template:
     src: .env.j2
     dest: /opt/immich/.env
     mode: '400'
+    group: '1000'
+    owner: '1000'
 
 
 - name: Deploy immich container
