@@ -1,3 +1,25 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/docmost
+
+- name: Create docmost directory
+  ansible.builtin.file:
+    path: /opt/docmost
+    state: directory
+    mode: '0700'
+    group: '1000'
+    owner: '1000'
+
+- name: Copy docker compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/docmost/docker-compose.yml
+    mode: '400'
+    group: '1000'
+    owner: '1000'
+
+
+- name: Deploy docmost container
+  community.docker.docker_compose_v2:
+    project_src: /opt/docmost
+    state: present

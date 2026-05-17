@@ -5,9 +5,9 @@ services:
       - db
       - redis
     environment:
-      APP_URL: "http://localhost:3000"
-      APP_SECRET: "REPLACE_WITH_LONG_SECRET"
-      DATABASE_URL: "postgresql://docmost:STRONG_DB_PASSWORD@db:5432/docmost"
+      APP_URL: "{{ docmost_app_url }}"
+      APP_SECRET: {{ docmost_secret }}
+      DATABASE_URL: "postgresql://docmost:{{ docmost_db_pass }}@db:5432/docmost_db"
       REDIS_URL: "redis://redis:6379"
     ports:
       - "3002:3000"
@@ -20,7 +20,7 @@ services:
     environment:
       POSTGRES_DB: docmost
       POSTGRES_USER: docmost
-      POSTGRES_PASSWORD: STRONG_DB_PASSWORD
+      POSTGRES_PASSWORD: {{ docmost_db_pass }}
     restart: unless-stopped
     volumes:
       - db_data:/var/lib/postgresql
