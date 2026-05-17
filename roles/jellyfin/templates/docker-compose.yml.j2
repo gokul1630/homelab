@@ -9,7 +9,7 @@ services:
       - /opt/jellyfin/config:/config
       - /opt/jellyfin/cache:/cache
       - type: bind
-        source: /mnt/media
+        source: {{ jellyfin_path }}
         target: /media
         read_only: true
     restart: 'unless-stopped'
