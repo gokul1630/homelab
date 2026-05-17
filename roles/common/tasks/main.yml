@@ -3,7 +3,6 @@
 # tasks file for roles/common
 
 - name: Update package cache
-  become: true
   when: ansible_os_family == "Debian"
   ansible.builtin.apt:
     update_cache: true

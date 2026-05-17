@@ -1,27 +1,12 @@
 - name: Homelab
   hosts: gokul
+  become: true
+  vars:
+      sudo_user: gokul
   roles:
       - common
-      - role: docker
-        become: true
-        vars:
-            ansible_user: gokul
-      - role: jellyfin
-        become: true
-        vars:
-            jellyfin_path: /tank/media/jellyfin
-      - role: immich
-        become: true
-        vars:
-            ansible_user: gokul
-            immich_path: /tank/immich
-      - role: navidrome
-        become: true
-        vars:
-            navidrome_path: /tank/media/navidrome
-      - role: docmost
-        become: true
-        vars:
-            docmost_app_url: ''
-            docmost_secret: ''
-            docmost_db_pass: ''
+      - docker
+      - jellyfin
+      - immich
+      - navidrome
+      - docmost

@@ -1,3 +1,5 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # vars file for roles/navidrome
+
+navidrome_path: /tank/media/navidrome
