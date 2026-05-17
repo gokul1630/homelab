@@ -15,3 +15,7 @@
         vars:
             ansible_user: gokul
             immich_path: /tank/immich
+      - role: navidrome
+        become: true
+        vars:
+            navidrome_path: /tank/media/navidrome

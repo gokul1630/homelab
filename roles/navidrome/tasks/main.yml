@@ -1,3 +1,24 @@
-#SPDX-License-Identifier: MIT-0
+# SPDX-License-Identifier: MIT-0
 ---
 # tasks file for roles/navidrome
+
+- name: Create navidrome directory
+  ansible.builtin.file:
+    path: /opt/navidrome
+    state: directory
+    mode: '0700'
+    group: '1000'
+    owner: '1000'
+
+- name: Copy navidrome docker-compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/navidrome/docker-compose.yml
+    mode: '0400'
+    group: '1000'
+    owner: '1000'
+
+- name: Deploy navidrome container
+  community.docker.docker_compose_v2:
+    project_src: /opt/navidrome
+    state: present
