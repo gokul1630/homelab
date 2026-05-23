@@ -16,4 +16,32 @@
       - wget
       - ca-certificates
       - gnupg
+      - samba
+      - smbclient
     state: present
+
+- name: Setup cronjob to shutdown system at spefic time
+  ansible.builtin.cron:
+    name: shutdown system at 12 AM
+    hour: '00'
+    minute: '00'
+    job: "/usr/sbin/shutdown now"
+
+- name: Setup samba
+  ansible.builtin.template:
+    src: samba.conf.j2
+    dest: /etc/samba/smb.conf
+    mode: '0644'
+
+- name: Add samba user
+  ansible.builtin.user:
+    name: '{{ sudo_user }}'
+    state: present
+    create_home: true
+
+- name: Add user to Samba database
+  ansible.builtin.shell: >
+    set -o pipefail;
+    (echo "{{ common_samba_password }}"; echo "{{ common_samba_password }}") | smbpasswd -s -a {{ sudo_user }}
+  register: common_smb_user_result
+  changed_when: "'Added user' in common_smb_user_result.stdout"
