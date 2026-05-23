@@ -15,59 +15,6 @@ logging.basicConfig(
 log = logging.getLogger("homelab_exporter")
 
 
-def parse_size_to_bytes(value) -> float:
-    if isinstance(value, (int, float)):
-        return float(value)
-    
-    if not isinstance(value, str):
-        return 0.0
-    
-    value = value.strip()
-    if not value:
-        return 0.0
-    
-    try:
-        return float(value)
-    except ValueError:
-        pass
-
-    parts = value.split()
-    if len(parts) != 2:
-        return 0.0
-    
-    try:
-        num = float(parts[0])
-    except ValueError:
-        return 0.0
-    
-    unit = parts[1].upper().strip()
-    
-    # Binary units (1024-based)
-    binary_units = {
-        "B": 1,
-        "KIB": 1024,
-        "MIB": 1024 ** 2,
-        "GIB": 1024 ** 3,
-        "TIB": 1024 ** 4,
-        "PIB": 1024 ** 5,
-    }
-    
-    decimal_units = {
-        "KB": 1000,
-        "MB": 1000 ** 2,
-        "GB": 1000 ** 3,
-        "TB": 1000 ** 4,
-        "PB": 1000 ** 5,
-    }
-    
-    if unit in binary_units:
-        return num * binary_units[unit]
-    elif unit in decimal_units:
-        return num * decimal_units[unit]
-    
-    return 0.0
-
-
 class ImmichCollector:
     def __init__(self, base_url: str, api_key: str, timeout: int = 10):
         self.base_url = base_url.rstrip("/")
@@ -118,19 +65,19 @@ class ImmichCollector:
             disk_available = GaugeMetricFamily(
                 f"{prefix}_disk_available_bytes", "Available disk space in bytes"
             )
-            disk_available.add_metric([], parse_size_to_bytes(storage.get("diskAvailable", 0)))
+            disk_available.add_metric([], storage.get("diskAvailableRaw", 0))
             yield disk_available
 
             disk_size = GaugeMetricFamily(
                 f"{prefix}_disk_size_bytes", "Total disk size in bytes"
             )
-            disk_size.add_metric([], parse_size_to_bytes(storage.get("diskSize", 0)))
+            disk_size.add_metric([], storage.get("diskSizeRaw", 0))
             yield disk_size
 
             disk_use = GaugeMetricFamily(
                 f"{prefix}_disk_use_bytes", "Used disk space in bytes"
             )
-            disk_use.add_metric([], parse_size_to_bytes(storage.get("diskUse", 0)))
+            disk_use.add_metric([], storage.get("diskUseRaw", 0))
             yield disk_use
 
             disk_use_percent = GaugeMetricFamily(
@@ -179,7 +126,7 @@ class ImmichCollector:
                 if ustat:
                     user_photos.add_metric([name, email], ustat.get("images", 0))
                     user_videos.add_metric([name, email], ustat.get("videos", 0))
-                    user_total_assets.add_metric([name, email], ustat.get("usage", 0))
+                    user_total_assets.add_metric([name, email], ustat.get("total", 0))
         yield user_photos
         yield user_videos
         yield user_total_assets
