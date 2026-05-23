@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: MIT-0
+---
+# vars file for roles/docmost
+
+docmost_app_url: http://192.168.1.20:3000
+docmost_secret: o3Mmjol2IDeHRNubeg2e9NcecATL2xEj
+docmost_db_pass: 4S2L2gXmLcihx

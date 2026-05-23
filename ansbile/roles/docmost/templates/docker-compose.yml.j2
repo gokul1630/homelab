@@ -10,7 +10,7 @@ services:
       DATABASE_URL: "postgresql://docmost:{{ docmost_db_pass }}@db:5432/docmost_db"
       REDIS_URL: "redis://redis:6379"
     ports:
-      - "3002:3000"
+      - "3000:3000"
     restart: unless-stopped
     volumes:
       - docmost:/app/data/storage
