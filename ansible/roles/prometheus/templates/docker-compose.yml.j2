@@ -1,0 +1,19 @@
+services:
+  homelab-exporter:
+    image: gokul1630/homelab-exporter:0.1
+    container_name: homelab-exporter
+    platform: {{ system_arch }}
+    restart: unless-stopped
+    ports:
+      - "9877:9877"
+    env_file:
+      - .env
+    networks:
+      - immich_default
+      - navidrome_default
+
+networks:
+  immich_default:
+    external: true
+  navidrome_default:
+    external: true 

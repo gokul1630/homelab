@@ -13,9 +13,10 @@
       x86_64: amd64
       aarch64: arm64
   roles:
-      - common
-      - docker
-      - jellyfin
-      - immich
-      - navidrome
-      - docmost
+    - common
+    - docker
+    - jellyfin
+    - immich
+    - navidrome
+    - docmost
+    - prometheus

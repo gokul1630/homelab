@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/prometheus
+
+- name: Create prometheus directory
+  ansible.builtin.file:
+    path: /opt/prometheus
+    state: directory
+    mode: '0700'
+    group: '1000'
+    owner: '1000'
+
+- name: Copy docker-compose yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/prometheus/docker-compose.yml
+    mode: '400'
+    group: '1000'
+    owner: '1000'
+
+- name: Copy prometheus .env file
+  ansible.builtin.copy:
+    src: .env
+    dest: /opt/prometheus/.env
+    mode: '400'
+    group: '1000'
+    owner: '1000'
+
+
+- name: Deploy prometheus container
+  community.docker.docker_compose_v2:
+    project_src: /opt/prometheus
+    state: present
