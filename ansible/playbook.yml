@@ -1,8 +1,17 @@
 - name: Homelab
   hosts: gokul
   become: true
+  pre_tasks:
+    - name: Set architecture variable
+      ansible.builtin.set_fact:
+        system_arch: "{{ arch_map[ansible_architecture] }}"
+        cacheable: true
+
   vars:
-      sudo_user: gokul
+    sudo_user: gokul
+    arch_map:
+      x86_64: amd64
+      aarch64: arm64
   roles:
       - common
       - docker
