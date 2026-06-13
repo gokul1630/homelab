@@ -1,9 +1,14 @@
 services:
   homelab-exporter:
-    image: gokul1630/homelab-exporter:0.1
+    image: gokul1630/homelab-exporter:latest
     container_name: homelab-exporter
     platform: {{ system_arch }}
     restart: unless-stopped
+    pid: host
+    ipc: host
+    privileged: true
+    volumes:
+      - /:/host:ro
     ports:
       - "9877:9877"
     env_file:
