@@ -4,3 +4,6 @@
 
 common_samba_password: ''
 common_samba_path: /tank/media
+common_disk_path: /dev/nvme0n1p2
+common_remote_user: ubuntu
+common_remote_host: oracle-in.stalk-forel.ts.net

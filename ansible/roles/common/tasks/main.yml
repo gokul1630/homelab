@@ -45,3 +45,18 @@
     (echo "{{ common_samba_password }}"; echo "{{ common_samba_password }}") | smbpasswd -s -a {{ sudo_user }}
   register: common_smb_user_result
   changed_when: "'Added user' in common_smb_user_result.stdout"
+
+
+- name: Copy debian backup script
+  ansible.builtin.template:
+    src: debian_backup_script.sh.j2
+    dest: /usr/local/bin/debian-backup.sh
+    mode: '0644'
+
+- name: Setup debian backup cron
+  ansible.builtin.cron:
+    name: Take BTRFS backup to oracle cloud
+    hour: '10'
+    minute: '00'
+    user: root
+    job: "/usr/local/bin/debian-backup.sh >> /var/log/btrfs-backup.log 2>&1"
