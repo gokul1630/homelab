@@ -82,34 +82,33 @@ class ImmichCollector:
         user_photos = GaugeMetricFamily(
             f"{prefix}_user_photos_total",
             "Photos per user",
-            labels=["user", "email"],
+            labels=["user", "uid"],
         )
         user_videos = GaugeMetricFamily(
             f"{prefix}_user_videos_total",
             "Videos per user",
-            labels=["user", "email"],
+            labels=["user", "uid"],
         )
-        user_total_assets = GaugeMetricFamily(
-            f"{prefix}_user_total_assets",
-            "Total no of assets",
-            labels=["user", "email"],
+        user_total_usage_bytes = GaugeMetricFamily(
+            f"{prefix}_user_total_usage_bytes",
+            "User total usage of bytes",
+            labels=["user", "uid"],
         )
-        if users:
-            for user in users:
-                uid = user.get("id", "")
-                name = user.get("name", uid)
-                email = user.get("email", "")
-                ustat = self._get(f"/api/admin/users/{uid}/statistics")
-                if ustat:
+
+        if stats:
+            for user in stats.get('usageByUser', []):
+                if user:
+                    uid = user.get("userId", "")
+                    name = user.get("userName", uid)
                     user_photos.add_metric(
-                        [name, email], ustat.get("images", 0))
+                        [name, uid], user.get("photos", 0))
                     user_videos.add_metric(
-                        [name, email], ustat.get("videos", 0))
-                    user_total_assets.add_metric(
-                        [name, email], ustat.get("total", 0))
+                        [name, uid], user.get("videos", 0))
+                    user_total_usage_bytes.add_metric(
+                        [name, uid], user.get("usage", 0))
         yield user_photos
         yield user_videos
-        yield user_total_assets
+        yield user_total_usage_bytes
 
         # Jobs / Queue health
         jobs = self._get("/api/jobs")
@@ -354,11 +353,6 @@ class ZpoolCollector:
 
         state = vdev.get("state", "UNKNOWN")
 
-        metrics["health"].add_metric(
-            labels,
-            1 if state == "ONLINE" else 0,
-        )
-
         metrics["state"].add_metric(
             labels,
             self.STATE_MAP.get(state, 0),
@@ -435,12 +429,6 @@ class ZpoolCollector:
         zpool_up.add_metric([], 1)
         yield zpool_up
 
-        pool_health = GaugeMetricFamily(
-            "zpool_health",
-            "Pool health",
-            labels=["pool"]
-        )
-
         pool_state = GaugeMetricFamily(
             "zpool_state",
             "Pool state",
@@ -484,11 +472,6 @@ class ZpoolCollector:
         )
 
         metrics = {
-            "health": GaugeMetricFamily(
-                "zpool_vdev_health",
-                "VDEV health",
-                labels=["pool", "vdev", "type"]
-            ),
             "state": GaugeMetricFamily(
                 "zpool_vdev_state",
                 "VDEV state",
@@ -535,11 +518,6 @@ class ZpoolCollector:
 
             state = pool.get("state", "UNKNOWN")
 
-            pool_health.add_metric(
-                [pool_name],
-                1 if state == "ONLINE" else 0
-            )
-
             pool_state.add_metric(
                 [pool_name],
                 self.STATE_MAP.get(state, 0)
@@ -581,7 +559,6 @@ class ZpoolCollector:
                     metrics,
                 )
 
-        yield pool_health
         yield pool_state
         yield pool_error_count
         yield scan_errors
