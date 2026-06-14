@@ -108,7 +108,8 @@ One of the primary goals of this homelab is reducing dependency on recurring sub
 #### Estimated Annual Savings
 
 ```text
-Google One          ≈ ₹3,600
-Music Subscription  ≈ ₹1,400
---------------------------------
-Total Savings       ≈ ₹5,000+/year
+Google One               ≈ ₹3,600
+Music Subscription       ≈ ₹1,400
+Oracle(Always free tier) ≈ ₹0
+-----------------------------------
+Total Savings            ≈ ₹5,000+/year
