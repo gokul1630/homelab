@@ -4,3 +4,4 @@
 
 ansible_user: gokul
 immich_path: /tank/immich
+immich_version: v3
