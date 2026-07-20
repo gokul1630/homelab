@@ -61,3 +61,12 @@
     day: '*/4'
     user: root
     job: "/usr/local/bin/debian-backup.sh >> /var/log/btrfs-backup.log 2>&1"
+
+- name: Setup cron for zpool scrub
+  ansible.builtin.cron:
+    name: zpool scrub
+    minute: '00'
+    hour: '10'
+    day: '1'
+    user: root
+    job: "/usr/bin/zpool scrub tank"
