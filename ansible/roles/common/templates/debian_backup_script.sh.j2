@@ -31,6 +31,9 @@ sudo btrfs subvolume snapshot -r \
     "$MOUNTPOINT/@rootfs" \
     "$MOUNTPOINT/.snapshots/$SNAPSHOT_NAME"
 
+echo "Snapshot size:"
+sudo btrfs filesystem du -s "$MOUNTPOINT/.snapshots/$SNAPSHOT_NAME"
+
 # Send to remote server
 
 echo "Sending backup..."
