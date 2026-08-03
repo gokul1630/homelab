@@ -87,7 +87,7 @@ Collected Metrics:
 - Storage usage metrics
 
 ### Grafana Dashboard
-<img width="1800" height="1000" alt="image" src="https://github.com/user-attachments/assets/c338f1a6-0a87-4711-8de7-58b7dabdb8d4" />
+![alt text](assets/image.png)
 
 ## Learning Goals
 
