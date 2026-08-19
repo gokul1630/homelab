@@ -16,7 +16,7 @@
     - common
     - docker
     - jellyfin
-    - immich
+    # - immich
     - navidrome
     - docmost
     - prometheus

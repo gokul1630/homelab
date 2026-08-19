@@ -1,0 +1,86 @@
+immich:
+  version: release
+
+imagePullPolicy: IfNotPresent
+server:
+  replicas: 1
+  service:
+    type: NodePort
+    port: 2283
+    nodePort: 32283
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+
+machineLearning:
+  replicas: 1
+  image:
+    repository: ghcr.io/immich-app/immich-machine-learning
+  service:
+    port: 3003
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "4"
+      memory: 8Gi
+
+redis:
+  image: valkey/valkey
+  tag: "9"
+  replicas: 1
+
+database:
+  image: ghcr.io/immich-app/postgres
+  tag: 14-vectorchord0.4.3-pgvectors0.2.0
+  replicas: 1
+  username: 
+  databaseName: immich
+  password: 
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
+
+storage:
+  hostPath:
+    enabled: true
+
+  common:
+    reclaimPolicy: Retain
+
+  uploads:
+    size: 500Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: ""
+    hostPath: /tank/immich
+
+  postgres:
+    size: 20Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: ""
+    hostPath: /tank/immich/postgres
+
+  modelCache:
+    size: 10Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: ""
+    hostPath: /tank/immich/model-cache
+
+networkPolicy:
+  enabled: true
+  lanCIDR: 192.168.1.0/24
+  TailscaleCIDR: 100.64.0.0/10
+  ingressControllerNamespace: ingress-nginx
+  dnsNamespace: kube-system
