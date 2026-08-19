@@ -18,7 +18,13 @@ This homelab serves as a platform to learn and practice:
 ---
 
 # Architecture
-<img width="385" height="512" alt="image" src="https://github.com/user-attachments/assets/8ab42688-e1e4-4d23-bc85-c44412b3d800" />
+<img width="385" height="512" alt="image" src="https://github.com/user-attachments/assets/688d04ed-be8f-4a90-894a-c326037dc7a4" />
+
+## Pf sense router
+#### pfSense running on a low-power thin desktop client.
+<img width="795" height="785" alt="2026-08-15_11-12" src="https://github.com/user-attachments/assets/3d38441c-c31d-4915-b907-2fd058848830" />
+
+
 
 ## Automation
 
