@@ -1,0 +1,156 @@
+{{- if .Values.networkPolicy.enabled }}
+# Default deny for all Immich pods.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "immich.fullname" . }}-default-deny
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# Ingress controller -> Immich server
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "immich.fullname" . }}-allow-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "immich.fullname" . }}-server
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressControllerNamespace }}
+      ports:
+        - protocol: TCP
+          port: 2283
+    - from:
+        - ipBlock:
+            cidr: {{ .Values.networkPolicy.lanCIDR }}
+        - ipBlock:
+            cidr: {{ .Values.networkPolicy.TailscaleCIDR }}
+      ports:
+        - protocol: TCP
+          port: 2283
+---
+# Immich server -> PostgreSQL
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "immich.fullname" . }}-allow-database
+spec:
+  podSelector:
+    matchLabels:
+      app: database
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: immich-server
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 5432
+---
+# Immich server -> Redis
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "immich.fullname" . }}-allow-redis
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ include "immich.fullname" . }}-server
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+# Immich server -> Machine Learning
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "immich.fullname" . }}-allow-ml
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "immich.fullname" . }}-machine-learning
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: {{ include "immich.fullname" . }}-server
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 3003
+---
+# Immich server egress: database, Redis, ML, DNS and optional HTTPS.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "immich.fullname" . }}-server-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ include "immich.fullname" . }}-server
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: database
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 5432
+    - to:
+        - podSelector:
+            matchLabels:
+              app: redis
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 6379
+    - to:
+        - podSelector:
+            matchLabels:
+              app: {{ include "immich.fullname" . }}-machine-learning
+              app.kubernetes.io/instance: {{ .Release.Name }}
+      ports:
+        - protocol: TCP
+          port: 3003
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.dnsNamespace }}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+{{- end }}

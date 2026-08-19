@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "immich.fullname" . }}-uploads
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.storage.uploads.accessModes | nindent 4 }}
+  {{- if .Values.storage.uploads.storageClassName }}
+  storageClassName: {{ .Values.storage.uploads.storageClassName | quote }}
+  {{- end }}
+  volumeName: {{ include "immich.fullname" . }}-uploads
+  resources:
+    requests:
+      storage: {{ .Values.storage.uploads.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "immich.fullname" . }}-postgres
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.storage.postgres.accessModes | nindent 4 }}
+  {{- if .Values.storage.postgres.storageClassName }}
+  storageClassName: {{ .Values.storage.postgres.storageClassName | quote }}
+  {{- end }}
+  volumeName: {{ include "immich.fullname" . }}-postgres
+  resources:
+    requests:
+      storage: {{ .Values.storage.postgres.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "immich.fullname" . }}-model-cache
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.storage.modelCache.accessModes | nindent 4 }}
+  {{- if .Values.storage.modelCache.storageClassName }}
+  storageClassName: {{ .Values.storage.modelCache.storageClassName | quote }}
+  {{- end }}
+  volumeName: {{ include "immich.fullname" . }}-model-cache
+  resources:
+    requests:
+      storage: {{ .Values.storage.modelCache.size }}

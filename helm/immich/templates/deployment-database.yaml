@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "immich.fullname" . }}-database
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+    app: database
+spec:
+  replicas: {{ .Values.database.replicas }}
+  selector:
+    matchLabels:
+      {{- include "immich.databaseLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "immich.databaseLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "immich.fullname" . }}
+      containers:
+        - name: postgres
+          image: "{{ .Values.database.image }}:{{ .Values.database.tag }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "immich.fullname" . }}-db
+                  key: DB_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "immich.fullname" . }}-config
+                  key: DB_USERNAME
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "immich.fullname" . }}-config
+                  key: DB_DATABASE_NAME
+            - name: POSTGRES_INITDB_ARGS
+              value: "--data-checksums"
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            {{- toYaml .Values.database.resources | nindent 12 }}
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "{{ .Values.database.username }}", "-d", "{{ .Values.database.databaseName }}"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "{{ .Values.database.username }}", "-d", "{{ .Values.database.databaseName }}"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: {{ include "immich.fullname" . }}-postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "immich.fullname" . }}-database
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "immich.databaseLabels" . | nindent 4 }}
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres

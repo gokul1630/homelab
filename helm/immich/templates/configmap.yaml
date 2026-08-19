@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "immich.fullname" . }}-config
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+data:
+  DB_USERNAME: {{ .Values.database.username | quote }}
+  DB_DATABASE_NAME: {{ .Values.database.databaseName | quote }}
+  DB_HOSTNAME: {{ include "immich.fullname" . }}-database
+  DB_PORT: "5432"
+  REDIS_HOSTNAME: {{ include "immich.fullname" . }}-redis
+  REDIS_PORT: "6379"
+  IMMICH_MACHINE_LEARNING_URL: http://{{ include "immich.fullname" . }}-machine-learning:3003

@@ -1,0 +1,7 @@
+apiVersion: v2
+name: immich
+description: A Helm chart for deploying Immich on Kubernetes
+type: application
+version: 0.1.0
+appVersion: "release"
+kubeVersion: ">=1.25.0-0"

@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "immich.fullname" . }}-machine-learning
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+    app: immich-machine-learning
+spec:
+  replicas: {{ .Values.machineLearning.replicas }}
+  selector:
+    matchLabels:
+      {{- include "immich.mlLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "immich.mlLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "immich.fullname" . }}
+      containers:
+        - name: machine-learning
+          image: "{{ .Values.machineLearning.image.repository }}:{{ .Values.immich.version }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: ml
+              containerPort: 3003
+          env:
+            - name: TRANSFORMERS_CACHE
+              value: /cache
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            {{- toYaml .Values.machineLearning.resources | nindent 12 }}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: model-cache
+          persistentVolumeClaim:
+            claimName: {{ include "immich.fullname" . }}-model-cache
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "immich.fullname" . }}-machine-learning
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "immich.mlLabels" . | nindent 4 }}
+  ports:
+    - name: ml
+      port: 3003
+      targetPort: ml

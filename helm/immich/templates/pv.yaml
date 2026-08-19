@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "immich.fullname" . }}-uploads
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.storage.uploads.size }}
+  accessModes:
+    {{- toYaml .Values.storage.uploads.accessModes | nindent 4 }}
+  persistentVolumeReclaimPolicy: {{ .Values.storage.common.reclaimPolicy }}
+  {{- if .Values.storage.uploads.storageClassName }}
+  storageClassName: {{ .Values.storage.uploads.storageClassName | quote }}
+  {{- end }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: {{ include "immich.fullname" . }}-uploads
+  hostPath:
+    path: {{ .Values.storage.uploads.hostPath }}
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "immich.fullname" . }}-postgres
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.storage.postgres.size }}
+  accessModes:
+    {{- toYaml .Values.storage.postgres.accessModes | nindent 4 }}
+  persistentVolumeReclaimPolicy: {{ .Values.storage.common.reclaimPolicy }}
+  {{- if .Values.storage.postgres.storageClassName }}
+  storageClassName: {{ .Values.storage.postgres.storageClassName | quote }}
+  {{- end }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: {{ include "immich.fullname" . }}-postgres
+  hostPath:
+    path: {{ .Values.storage.postgres.hostPath }}
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "immich.fullname" . }}-model-cache
+  labels:
+    {{- include "immich.labels" . | nindent 4 }}
+spec:
+  capacity:
+    storage: {{ .Values.storage.modelCache.size }}
+  accessModes:
+    {{- toYaml .Values.storage.modelCache.accessModes | nindent 4 }}
+  persistentVolumeReclaimPolicy: {{ .Values.storage.common.reclaimPolicy }}
+  {{- if .Values.storage.modelCache.storageClassName }}
+  storageClassName: {{ .Values.storage.modelCache.storageClassName | quote }}
+  {{- end }}
+  claimRef:
+    namespace: {{ .Release.Namespace }}
+    name: {{ include "immich.fullname" . }}-model-cache
+  hostPath:
+    path: {{ .Values.storage.modelCache.hostPath }}
