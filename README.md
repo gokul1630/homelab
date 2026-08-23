@@ -122,3 +122,4 @@ Music Subscription       ≈ ₹1,400
 Oracle(Always free tier) ≈ ₹0
 -----------------------------------
 Total Savings            ≈ ₹5,000+/year
+
