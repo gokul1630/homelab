@@ -13,7 +13,7 @@ services:
       - "3000:3000"
     restart: unless-stopped
     volumes:
-      - docmost:/app/data/storage
+      - /opt/docmost/data/storage:/app/data/storage
 
   db: 
     image: postgres:18
@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: {{ docmost_db_pass }}
     restart: unless-stopped
     volumes:
-      - db_data:/var/lib/postgresql
+      - /opt/docmost/data/postgresql:/var/lib/postgresql
 
   redis:
     image: redis:8
@@ -33,6 +33,4 @@ services:
       - redis_data:/data
 
 volumes:
-  docmost:
-  db_data:
   redis_data:

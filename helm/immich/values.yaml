@@ -69,14 +69,14 @@ storage:
     accessModes:
       - ReadWriteOnce
     storageClassName: ""
-    hostPath: /tank/immich/postgres
+    hostPath: /opt/immich/postgres
 
   modelCache:
     size: 10Gi
     accessModes:
       - ReadWriteOnce
     storageClassName: ""
-    hostPath: /tank/immich/model-cache
+    hostPath: /opt/immich/model-cache
 
 networkPolicy:
   enabled: true
