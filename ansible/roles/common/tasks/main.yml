@@ -20,13 +20,6 @@
       - smbclient
     state: present
 
-- name: Setup cronjob to shutdown system at spefic time
-  ansible.builtin.cron:
-    name: shutdown system at 12 AM
-    hour: '00'
-    minute: '00'
-    job: "/usr/sbin/shutdown now"
-
 - name: Setup samba
   ansible.builtin.template:
     src: samba.conf.j2
@@ -47,20 +40,39 @@
   changed_when: "'Added user' in common_smb_user_result.stdout"
 
 
-- name: Copy debian backup script
+- name: Copy borg pass
+  ansible.builtin.copy:
+    src: .borg.pass
+    dest: "/opt/.borg.pass"
+    mode: '0400'
+
+- name: Copy application data backup script
   ansible.builtin.template:
     src: debian_backup_script.sh.j2
     dest: /usr/local/bin/debian-backup.sh
     mode: '0644'
 
-- name: Setup debian backup cron
+- name: Setup application data backup cron
   ansible.builtin.cron:
-    name: Take BTRFS backup to oracle cloud
+    name: Take application data backup to oracle cloud
+    hour: '18'
+    minute: '00'
+    user: root
+    job: "/bin/bash /usr/local/bin/debian-backup.sh >> /var/log/debian-backup.log 2>&1"
+
+- name: Copy zpool backup script
+  ansible.builtin.template:
+    src: zpool_backup.sh.j2
+    dest: /usr/local/bin/zpool_backup.sh
+    mode: '0644'
+
+- name: Setup zpool data backup cron
+  ansible.builtin.cron:
+    name: Take zpool backup to oracle cloud
     hour: '19'
     minute: '00'
-    day: '*/4'
     user: root
-    job: "/usr/local/bin/debian-backup.sh >> /var/log/btrfs-backup.log 2>&1"
+    job: "/bin/bash /usr/local/bin/zpool_backup.sh >> /var/log/zpool-backup.log 2>&1"
 
 - name: Setup cron for zpool scrub
   ansible.builtin.cron:

@@ -5,8 +5,8 @@ set -e
 
 export BORG_PASSCOMMAND="cat /opt/.borg.pass"
 
-REPO="{{ common_data_backup_server_ssh_user }}:{{ common_data_backup_server_path }}"
-SOURCE="{{ common_data_source_path }}"
+REPO="{{ common_zpool_backup_server_ssh_user }}:{{ common_zpool_backup_server_path }}"
+SOURCE="{{ common_zpool_source_path }}"
 
 log () {
   echo "$(date '+%Y-%m-%d %H:%M:%S') :: $1"
