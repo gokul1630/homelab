@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: MIT-0
+---
+# vars file for roles/k3s
+
+k3s_version: "v1.36.3+k3s1"
+
+k3s_argocd_namespace: "argocd"
+
+k3s_argocd_version: "stable"
+
+k3s_argocd_install_manifest: >-
+  https://raw.githubusercontent.com/argoproj/argo-cd/{{ k3s_argocd_version }}/manifests/install.yaml

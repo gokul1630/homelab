@@ -1,0 +1,95 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/k3s
+- name: Check if K3s is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/k3s
+  register: k3s_binary
+
+- name: Download K3s installer script
+  ansible.builtin.get_url:
+    url: https://get.k3s.io
+    dest: /tmp/k3s_install.sh
+    mode: "0500"
+  when: not k3s_binary.stat.exists
+
+- name: Execute K3s installer script
+  ansible.builtin.command:
+    cmd: /tmp/k3s_install.sh server --write-kubeconfig-mode 644
+  environment:
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+  args:
+    creates: /usr/local/bin/k3s
+  when: not k3s_binary.stat.exists
+
+- name: Clean up temporary installer script
+  ansible.builtin.file:
+    path: /tmp/k3s_install.sh
+    state: absent
+  when: not k3s_binary.stat.exists
+
+- name: Enable K3s
+  ansible.builtin.systemd:
+    name: k3s
+    enabled: true
+    state: started
+  when: not k3s_binary.stat.exists
+
+# Argo CD
+
+# Check whether Argo CD is already installed
+- name: Check Argo CD installation
+  ansible.builtin.command:
+    cmd: kubectl -n {{ k3s_argocd_namespace }} get deployment argocd-server
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: k3s_argocd_installed
+  changed_when: false
+  failed_when: false
+
+- name: Create Argo CD namespace
+  ansible.builtin.command:
+    cmd: kubectl create namespace {{ k3s_argocd_namespace }}
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: k3s_argocd_namespace_result
+  failed_when:
+    - k3s_argocd_namespace_result.rc != 0
+    - "'AlreadyExists' not in k3s_argocd_namespace_result.stderr"
+  changed_when: k3s_argocd_namespace_result.rc == 0
+  when: k3s_argocd_installed.rc != 0
+
+- name: Download Argo CD installation manifest
+  ansible.builtin.get_url:
+    url: "{{ k3s_argocd_install_manifest }}"
+    dest: /tmp/argocd-install.yaml
+    mode: "0644"
+  when: k3s_argocd_installed.rc != 0
+
+- name: Install Argo CD
+  ansible.builtin.command:
+    cmd: >
+      kubectl apply
+      -n {{ k3s_argocd_namespace }}
+      --server-side
+      --force-conflicts
+      -f /tmp/argocd-install.yaml
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: k3s_argocd_apply
+  changed_when: >
+    'created' in k3s_argocd_apply.stdout or
+    'configured' in k3s_argocd_apply.stdout or
+    'deleted' in k3s_argocd_apply.stdout
+  when: k3s_argocd_installed.rc != 0
+
+- name: Wait for Argo CD server
+  ansible.builtin.command:
+    cmd: >
+      kubectl -n {{ k3s_argocd_namespace }}
+      rollout status deployment/argocd-server
+      --timeout=300s
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: k3s_argocd_rollout
+  changed_when: false
