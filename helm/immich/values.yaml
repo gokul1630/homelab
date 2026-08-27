@@ -27,7 +27,7 @@ machineLearning:
       cpu: 500m
       memory: 1Gi
     limits:
-      cpu: "4"
+      cpu: "2"
       memory: 8Gi
 
 redis:
