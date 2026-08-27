@@ -83,6 +83,24 @@
     'deleted' in k3s_argocd_apply.stdout
   when: k3s_argocd_installed.rc != 0
 
+- name: Expose Argo CD server as NodePort
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: Service
+    name: argocd-server
+    namespace: "{{ k3s_argocd_namespace }}"
+    state: present
+    definition:
+      spec:
+        type: NodePort
+        ports:
+          - name: http
+            nodePort: 30100
+            port: 80
+            protocol: TCP
+            targetPort: 8080
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+
 - name: Wait for Argo CD server
   ansible.builtin.command:
     cmd: >
