@@ -50,17 +50,16 @@ I'm using both disks in mirror mode for data redundancy and fault tolerance
 Boot disk Backup Strategy
 ───────────────────────────────────────────────────────────────────
                      ┌────────────────────┐
-                     │   NVME Boot disk   │
-                     │      256Gb         │
+                     │     /opt data      │
+                     │  256Gb boot disk   │
                      └─────────┬──────────┘
                                │
                                |
                                ▼
-                  Oracle HYD periodic Backup
-                    Snapshot Sync Cron Job                   
+                      Oracle HYD daily data
+                         Sync Cron Job                   
 ```
-- I'm using a shell script to back up the boot disk through btrfs snapshots and store it in Oracle Cloud
-- All the backups are retained for 7 days
+- I'm using a shell script to back up the boot disk through [borgBackup](https://www.borgbackup.org/) and store it in Oracle Cloud
 
 ## Observability Stack
 ```text
