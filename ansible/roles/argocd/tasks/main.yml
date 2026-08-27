@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: MIT-0
+---
+# tasks file for roles/argocd
+
+- name: Deploy Immich to ArgoCD
+  kubernetes.core.k8s:
+    state: present
+    template: immich.yaml.j2
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
