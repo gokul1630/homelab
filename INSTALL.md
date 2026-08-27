@@ -2,7 +2,7 @@
 ## install Ansible 
 > install ansbile then below command to install the required collection
 ```
-ansible-galaxy collection install kubernetes.core
+ansible-galaxy collection install -r requirements.yml
 ```
 then
 ```
