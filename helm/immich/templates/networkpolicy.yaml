@@ -32,11 +32,6 @@ spec:
       ports:
         - protocol: TCP
           port: 2283
-    - from:
-        - ipBlock:
-            cidr: {{ .Values.networkPolicy.lanCIDR }}
-        - ipBlock:
-            cidr: {{ .Values.networkPolicy.TailscaleCIDR }}
       ports:
         - protocol: TCP
           port: 2283
@@ -147,7 +142,7 @@ spec:
     - to:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: {{ .Values.networkPolicy.dnsNamespace }}
+              kubernetes.io/metadata.name: {{ .Values.networkPolicy.ingressControllerNamespace }}
       ports:
         - protocol: UDP
           port: 53

@@ -77,6 +77,5 @@ spec:
     {{- include "immich.serverLabels" . | nindent 4 }}
   ports:
     - name: http
-      nodePort: {{ .Values.server.service.nodePort }}
       port: {{ .Values.server.service.port }}
       targetPort: {{ .Values.server.service.port }}
