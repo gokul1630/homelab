@@ -15,11 +15,11 @@ borg list "$REPO"
 
 read -rp "Enter the archive name to restore: " ARCHIVE
 
-mkdir -p "$RESTORE_DIR"
+mkdir -p "$RESTORE_DIR" && cd "$RESTORE_DIR"
 
 log "Restoring $ARCHIVE to $RESTORE_DIR..."
 
-borg extract \
+borg extract --list \
     "$REPO::$ARCHIVE"
 
 log "Restore completed."
