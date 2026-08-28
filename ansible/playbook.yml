@@ -16,9 +16,9 @@
     - common
     - docker
     - jellyfin
-    # - immich
+    - immich
     - navidrome
     - docmost
     - prometheus
-    - k3s
-    - argocd
+    # - k3s
+    # - argocd
