@@ -61,21 +61,21 @@ storage:
     size: 500Gi
     accessModes:
       - ReadWriteOnce
-    storageClassName: ""
+    storageClassName: local-path
     hostPath: /tank/immich
 
   postgres:
     size: 20Gi
     accessModes:
       - ReadWriteOnce
-    storageClassName: ""
+    storageClassName: local-path
     hostPath: /opt/immich/postgres
 
   modelCache:
     size: 10Gi
     accessModes:
       - ReadWriteOnce
-    storageClassName: ""
+    storageClassName: local-path
     hostPath: /opt/immich/model-cache
 
 networkPolicy:

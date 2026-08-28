@@ -10,7 +10,6 @@ spec:
   {{- if .Values.storage.uploads.storageClassName }}
   storageClassName: {{ .Values.storage.uploads.storageClassName | quote }}
   {{- end }}
-  volumeName: {{ include "immich.fullname" . }}-uploads
   resources:
     requests:
       storage: {{ .Values.storage.uploads.size }}
@@ -27,7 +26,6 @@ spec:
   {{- if .Values.storage.postgres.storageClassName }}
   storageClassName: {{ .Values.storage.postgres.storageClassName | quote }}
   {{- end }}
-  volumeName: {{ include "immich.fullname" . }}-postgres
   resources:
     requests:
       storage: {{ .Values.storage.postgres.size }}
@@ -44,7 +42,6 @@ spec:
   {{- if .Values.storage.modelCache.storageClassName }}
   storageClassName: {{ .Values.storage.modelCache.storageClassName | quote }}
   {{- end }}
-  volumeName: {{ include "immich.fullname" . }}-model-cache
   resources:
     requests:
       storage: {{ .Values.storage.modelCache.size }}

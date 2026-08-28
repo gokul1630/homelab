@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "immich.fullname" . }}-database
   labels:
     {{- include "immich.labels" . | nindent 4 }}
     app: database
 spec:
+  serviceName: {{ include "immich.fullname" . }}-database
   replicas: {{ .Values.database.replicas }}
   selector:
     matchLabels:
@@ -48,12 +49,22 @@ spec:
             {{- toYaml .Values.database.resources | nindent 12 }}
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "{{ .Values.database.username }}", "-d", "{{ .Values.database.databaseName }}"]
+              command:
+                - pg_isready
+                - -U
+                - "{{ .Values.database.username }}"
+                - -d
+                - "{{ .Values.database.databaseName }}"
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             exec:
-              command: ["pg_isready", "-U", "{{ .Values.database.username }}", "-d", "{{ .Values.database.databaseName }}"]
+              command:
+                - pg_isready
+                - -U
+                - "{{ .Values.database.username }}"
+                - -d
+                - "{{ .Values.database.databaseName }}"
             initialDelaySeconds: 30
             periodSeconds: 20
       volumes:
