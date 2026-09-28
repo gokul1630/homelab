@@ -1,3 +1,9 @@
 .ansible
 .env
 .borg.pass
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/*.tfvars
+!**/terraform.tfvars.example
