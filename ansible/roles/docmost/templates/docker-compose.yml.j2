@@ -7,7 +7,7 @@ services:
     environment:
       APP_URL: "{{ docmost_app_url }}"
       APP_SECRET: {{ docmost_secret }}
-      DATABASE_URL: "postgresql://docmost:{{ docmost_db_pass }}@db:5432/docmost_db"
+      DATABASE_URL: "postgresql://docmost:{{ docmost_db_pass }}@db:5432/docmost"
       REDIS_URL: "redis://redis:6379"
     ports:
       - "3000:3000"
