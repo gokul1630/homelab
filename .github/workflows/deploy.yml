@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: "22"
           cache: npm
-          cache-dependency-path: app/package.json
+          cache-dependency-path: terraform/app/package.json
       - name: Install dependencies
         run: npm install
       - name: Run tests
